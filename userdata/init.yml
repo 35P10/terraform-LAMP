@@ -1,0 +1,29 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+packages:
+  - apache2
+write_files:
+  - path: /var/www/html/info.php
+    content: |
+      <?php 
+      phpinfo();
+      ?>
+runcmd:
+  - sudo ufw allow in "Apache"
+  
+  - sudo apt -y install mysql-client mysql-server
+  
+  - sudo apt -y install php libapache2-mod-php php-mysql php-curl php-gd php-mbstring php-xml php-xmlrpc php-soap php-intl php-zip 
+  - sudo systemctl restart apache2
+  
+  - wget -c http://wordpress.org/latest.tar.gz
+  - tar xzvf latest.tar.gz
+  - sudo mv wordpress/* /var/www/html/
+  
+  - sudo chown -R www-data:www-data /var/www/html/
+  - sudo chmod -R 755 /var/www/html/
+  
+  - cd /var/www/html/
+  - sudo mv wp-config-sample.php wp-config.php
+  - sudo rm -rf index.html
